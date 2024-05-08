@@ -1,24 +1,31 @@
-<h1 align=center>hbs / rsar7sbootstrap (hand7sbootstrap)</h1>
-<p align=center>=> simple bootstrapping script <=</p>
-<img source=(https://github.com/s0me1newithhand7s/hand7sbootstrap/assets/117505144/ec2ff944-4b6d-4ff9-9ad7-9ba8823cb681)>
-<p align=center>Simple script created for linux tarball bootstrapping. </p>
-<br>
-<h2 align=center>:warning: Before use :warning:</h2>
-<p> :one: This script is ment to be executed from <code>root</code> (sudo/doas) and if you DO NOT understand what exactly you doing - DO NOT execute it.</p>
-<p> :two: I am do not responsable for actions perfomed by you.</p>
-<br>
-<h2 align=center>:question: How to? :question:</h2>
-<p align=center>Two ways:</p>
-<h3>1. curl > script way</h3>
-▪️ <code bash>curl https://raw.githubusercontent.com/Russanandres/rsar7sbootstrap/main/hbs.sh > /tmp/hbs.sh && sudo bash /tmp/hbs.sh</code>
-<h3>2. git clone way: </h3>
-▪️ <code bash>git clone https://github.com/Russanandres/rsar7sbootstrap.git && sudo bash rsar7sbootstrap/hbs.sh</code>
-<br>
-<br>
-<br>
-<h2 align=center>▶ Specian thanks to:</h2>
-<br>
+# HBS | rsar7sbootstrap
+[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
+
+This is just simple linux bootstraping script from tar, forked from [s0me1newithhand7s](https://github.com/s0me1newithhand7s/hand7sbootstrap)
+
+## :warning: Pay attention!
+- This script is ment to be executed from ```root``` user (sudo/doas) and if you **DO NOT** understand what exactly you doing - **DO NOT** execute it.
+- I am do not responsable for actions perfomed by you.
+
+## Install
+Just download script via curl and start it!
+```
+curl https://raw.githubusercontent.com/Russanandres/rsar7sbootstrap/main/hbs.sh > /tmp/hbs.sh && sudo bash /tmp/hbs.sh
+```
+Or, clone repo by `https://github.com/Russanandres/rsar7sbootstrap.git`, and then:
+```
+cd rsar7sbootstrap
+chmod +x ./hbs.sh
+./hbs.sh
+```
+<!---
+## Run arguments
+hbs.sh have a few little running arguments:
+-  `-v` OR `--version` - gives output about script version
+-  `-a` OR `--arch` - change your archetecture from amd64 to other
+--->
   
-Russanandres aka [Russanandres](https://github.com/Russanandres/) for testings and some help with.
-  
-Max aka [MaxMur](https://github.com/themaxmur/) testings.
+## Credentials & Thanks
+Original script made by [s0me1newithhand7s](https://github.com/s0me1newithhand7s/hand7sbootstrap)  
+Forked by [Russanandres](https://github.com/Russanandres)  
+Testing by [MaxMur](https://github.com/themaxmur/) and [Russanandres](https://github.com/Russanandres)  
