@@ -21,8 +21,9 @@ chmod +x ./hbs.sh
 <!---
 ## Run arguments
 hbs.sh have a few little running arguments:
--  `-v` OR `--version` - gives output about script version
--  `-a` OR `--arch` - change your archetecture from amd64 to other
+- `-v` OR `--version` - gives output about script version
+- `-a` OR `--arch` - change your archetecture from amd64 to other
+- `-u` OR `--user` - Bypass check for root account and run from current 
 --->
   
 ## :information_source: Credentials & Thanks
