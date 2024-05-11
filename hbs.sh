@@ -19,6 +19,7 @@ while [ "$1" != "" ]; do
         -v ) echo $VER; exit;;
 
         -a | --arc ) arc=$2; shift;;
+        -u | --user ) noroot=1;;
 
         --version ) echo "Linux Bootstraper $VER by Russanandres, forked from hand7s";exit;;
     esac;shift
@@ -26,7 +27,7 @@ done
 
 
 checks() {
-    if ! [ $(id -u) = 0 ]; then
+    if ! [ $(id -u) = 0 ] && [ $noroot != 1 ]; then
         echo -e "\033[1;34mRun me as a root.\033[0;37m"
         exit 1
     fi;}
