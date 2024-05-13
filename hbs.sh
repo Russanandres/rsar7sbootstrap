@@ -31,7 +31,8 @@ checks() {
     if ! [ $(id -u) = 0 ] && [ -z $noroot ]; then
         echo -e "\033[1;34mRun me as a root.\033[0;37m"
         exit 1
-    fi;}
+    fi
+    INSTPATH=$(readlink -f $INSTPATH);}
 
 dirmake() { mkdir -p $INSTPATH; cd $INSTPATH;}
 input_error() { echo -e "\033[1;34mProvide a valid option!\033[0;37m";exit 1;}
