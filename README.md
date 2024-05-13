@@ -23,6 +23,7 @@ chmod +x ./hbs.sh
 hbs.sh have a few little running arguments:
 - `-v` OR `--version` - gives output about script version
 - `-a` OR `--arch` - change your archetecture from amd64 to other
+- `-p` OR `--path` - change install path from /mnt/hbs to yours
 - `-u` OR `--user` - Bypass check for root account and run from current 
 --->
   
