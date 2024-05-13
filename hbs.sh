@@ -13,10 +13,9 @@ DIST="debian"
 GEN_INIT="openrc"
 VOID_TYPE="musl"
 
-echo $@
 while [ "$1" != "" ]; do
     case $1 in
-        -v ) echo $VER; exit;;
+        -v ) echo "release $VER"; exit;;
 
         -a | --arc ) arc=$2; shift;;
         -u | --user ) noroot=1;;
@@ -27,14 +26,14 @@ done
 
 
 checks() {
-    if ! [ $(id -u) = 0 ] && [ $noroot != 1 ]; then
+    if ! [ $(id -u) = 0 ] && [ -z $noroot ]; then
         echo -e "\033[1;34mRun me as a root.\033[0;37m"
         exit 1
     fi;}
 
 dirmake() { mkdir -p /mnt/hbs; cd /mnt/hbs;}
 input_error() { echo -e "\033[1;34mProvide a valid option!\033[0;37m";exit 1;}
-dist_type() { read -p "Family (arch/debian/gentoo/slackware/void) [debian]: " DIST;}
+dist_type() { read -p "Family (arch/debian/gentoo/slackware/void) (check/clear) [debian]: " DIST;}
 
 dist_family() {
     case $DIST in
@@ -43,6 +42,8 @@ dist_family() {
     gentoo)     echo -e "\033[1;34mChoosen gentoo.\033[0;37m";;
     slackware)  echo -e "\033[1;34mChoosen slackware.\033[0;37m";;
     void)       echo -e "\033[1;34mChoosen Void.\033[0;37m";;
+    check)      trap "dist_type" SIGINT;ls /mnt/hbs/*; read -sn1 ch;dist_type;;
+    clear)      rm -rf /mnt/hbs/*; echo "Done!";sleep 3;dist_type;;
     *)          echo -e "\033[1;34mProvide one of the described option!\033[0;37m";dist_type;;
     esac
 }
@@ -67,7 +68,7 @@ hbs_gentoo() {
         echo -e "\033[1;34mNow acquire gentoo openrc stage3 tarball.\033[0;37m"  
         wget https://distfiles.gentoo.org/releases/$arc/autobuilds/20240428T163427Z/stage3-$arc-openrc-20240428T163427Z.tar.xz
     elif [ "$GEN_INIT" == "systemd" ]; then
-        echo -e "\033[1;34mNow acquire gentoo openrc stage3 tarball.\033[0;37m"  
+        echo -e "\033[1;34mNow acquire gentoo systemd stage3 tarball.\033[0;37m"
         wget https://distfiles.gentoo.org/releases/$arc/autobuilds/20240428T163427Z/stage3-$arc-systemd-20240428T163427Z.tar.xz
     else input_error
     fi;untar
@@ -85,7 +86,7 @@ hbs_void() {
         echo -e "\033[1;34mNow acquire void base tarball.\033[0;37m"  
         wget https://repo-default.voidlinux.org/live/current/void-x86_64-ROOTFS-20240314.tar.xz
     elif [ "$VOID_TYPE" == "musl" ]; then
-        echo -e "\033[1;34mNow acquire void base tarball.\033[0;37m" 
+        echo -e "\033[1;34mNow acquire void musl tarball.\033[0;37m"
         wget https://repo-default.voidlinux.org/live/current/void-x86_64-musl-ROOTFS-20240314.tar.xz
     else input_error
     fi;untar
