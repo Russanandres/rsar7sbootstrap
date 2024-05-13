@@ -8,6 +8,7 @@
 VER=1
 arc=amd64
 # Precoded user inputs:
+INSTPATH="/mnt/hbs"
 DEB="debian"
 DIST="debian"
 GEN_INIT="openrc"
@@ -17,7 +18,8 @@ while [ "$1" != "" ]; do
     case $1 in
         -v ) echo "release $VER"; exit;;
 
-        -a | --arc ) arc=$2; shift;;
+        -a | --arc )  arc=$2; shift;;
+        -p | --path ) INSTPATH=$2;shift;;
         -u | --user ) noroot=1;;
 
         --version ) echo "Linux Bootstraper $VER by Russanandres, forked from hand7s";exit;;
@@ -31,7 +33,7 @@ checks() {
         exit 1
     fi;}
 
-dirmake() { mkdir -p /mnt/hbs; cd /mnt/hbs;}
+dirmake() { mkdir -p $INSTPATH; cd $INSTPATH;}
 input_error() { echo -e "\033[1;34mProvide a valid option!\033[0;37m";exit 1;}
 dist_type() { read -p "Family (arch/debian/gentoo/slackware/void) (check/clear) [debian]: " DIST;}
 
@@ -42,8 +44,8 @@ dist_family() {
     gentoo)     echo -e "\033[1;34mChoosen gentoo.\033[0;37m";;
     slackware)  echo -e "\033[1;34mChoosen slackware.\033[0;37m";;
     void)       echo -e "\033[1;34mChoosen Void.\033[0;37m";;
-    check)      trap "dist_type" SIGINT;ls /mnt/hbs/*; read -sn1 ch;dist_type;;
-    clear)      rm -rf /mnt/hbs/*; echo "Done!";sleep 3;dist_type;;
+    check)      trap "dist_type" SIGINT;ls $INSTPATH/*; read -sn1 ch;dist_type;;
+    clear)      rm -rf $INSTPATH/*; echo "Done!";sleep 3;dist_type;;
     *)          echo -e "\033[1;34mProvide one of the described option!\033[0;37m";dist_type;;
     esac
 }
