@@ -8,15 +8,27 @@ This is just simple linux bootstraping script from tar, forked from [s0me1newith
 - I am do not responsable for actions perfomed by you.
 
 ## :floppy_disk: Install
-Just download script via curl and start it!
+Just download script via curl and start it!  
+Or, clone repo by `git clone https://github.com/Russanandres/rsar7sbootstrap.git`  
+### Command-Line UI (hbs.sh)
 ```
 curl https://raw.githubusercontent.com/Russanandres/rsar7sbootstrap/main/hbs.sh > /tmp/hbs.sh && sudo bash /tmp/hbs.sh
 ```
-Or, clone repo by `https://github.com/Russanandres/rsar7sbootstrap.git`, and then:
+or
 ```
 cd rsar7sbootstrap
 chmod +x ./hbs.sh
 ./hbs.sh
+```
+### Terminal UI (gbs.sh)
+```
+curl https://raw.githubusercontent.com/Russanandres/rsar7sbootstrap/main/gbs.sh > /tmp/gbs.sh && sudo bash /tmp/gbs.sh
+```
+or
+```
+cd rsar7sbootstrap
+chmod +x ./gbs.sh
+./gbs.sh
 ```
 <!---
 ## Run arguments
