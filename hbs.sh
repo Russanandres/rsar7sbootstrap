@@ -95,14 +95,7 @@ hbs_void() {
 }
 
 hbs_deb_str() {
-    if [ -d /usr/share ]; then
-        mkdir /usr/share/debootstrap/
-        mkdir /usr/share/debootstrap/scripts/
-    else
-        mkdir /usr/share/
-        mkdir /usr/share/debootstrap/
-        mkdir /usr/share/debootstrap/scripts/
-    fi
+    mkdir -p /usr/share/debootstrap/scripts/
     curl https://raw.githubusercontent.com/aburch/debootstrap/master/scripts/sid > /usr/share/debootstrap/scripts/sid
     curl https://raw.githubusercontent.com/aburch/debootstrap/master/functions > /usr/share/debootstrap/functions
     bash <(curl -fsLS https://raw.githubusercontent.com/aburch/debootstrap/master/debootstrap) --arch=$arc --make-tarball=debian.tar.gz --no-check-certificate --no-check-gpg sid /mnt/hsb http://deb.debian.org/debian/
