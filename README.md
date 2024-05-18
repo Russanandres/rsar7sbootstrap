@@ -4,8 +4,9 @@
 This is just simple linux bootstraping script from tar, forked from [s0me1newithhand7s](https://github.com/s0me1newithhand7s/hand7sbootstrap)
 
 ## :warning: Pay attention!
-- This script is ment to be executed from ```root``` user (sudo/doas) and if you **DO NOT** understand what exactly you doing - **DO NOT** execute it.
-- I am do not responsable for actions perfomed by you.
+- This script is ment to be executed from ```root``` user (sudo/doas) and if you **DO NOT** understand what exactly you doing - **DO NOT** execute it.  
+- I am do not responsable for actions perfomed by you.  
+- Make sure that you have `/dev/disk/by-label/root` and `/dev/disk/by-label/boot` as script is mounting them into `/mnt/hbs` directory!  
 
 ## :floppy_disk: Install
 Just download script via curl and start it!  
