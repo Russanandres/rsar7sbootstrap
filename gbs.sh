@@ -50,7 +50,10 @@ done;clear;}
 
 
 
-dirmake() { mkdir -p $INSTPATH; cd $INSTPATH;}
+dirmake() { mkdir -p $INSTPATH; cd $INSTPATH
+    mount /dev/disk/by-label/root $INSTPATH
+    mkdir -p $INSTPATH/boot
+    mount /dev/disk/by/label/boot $INSTPATH/boot;}
 input_error() { echo -e "\033[1;34mProvide a valid option!\033[0;37m";exit 1;}
 dist_type(){ trap "clear;exit" SIGINT
 dialog --clear --item-help --title "Choose something" --colors "$@" \
@@ -162,9 +165,8 @@ hbs_deb_str() { {
     mkdir -p /usr/share/debootstrap/scripts/
     curl https://raw.githubusercontent.com/aburch/debootstrap/master/scripts/sid > /usr/share/debootstrap/scripts/sid
     curl https://raw.githubusercontent.com/aburch/debootstrap/master/functions > /usr/share/debootstrap/functions
-    bash <(curl -fsLS https://raw.githubusercontent.com/aburch/debootstrap/master/debootstrap) --arch=$arc --make-tarball=debian.tar.gz --no-check-certificate --no-check-gpg sid /mnt/hsb http://deb.debian.org/debian/
-    rm -rf /usr/share/debootstrap
-    untar; } 2>&1 | dialog --progressbox "Well, here it is debian install:" 30 100
+    bash <(curl -fsLS https://raw.githubusercontent.com/aburch/debootstrap/master/debootstrap) --arch=$arc --no-check-certificate --no-check-gpg sid /mnt/hsb http://deb.debian.org/debian/
+    rm -rf /usr/share/debootstrap; } 2>&1 | dialog --progressbox "Well, here it is debian install:" 30 100
 }
 
 hbs_type() { clear
