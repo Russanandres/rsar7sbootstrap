@@ -31,14 +31,14 @@ cd rsar7sbootstrap
 chmod +x ./gbs.sh
 ./gbs.sh
 ```
-<!---
-## Run arguments
+
+## :flags: Run arguments
 hbs.sh have a few little running arguments:
 - `-v` OR `--version` - gives output about script version
-- `-a` OR `--arch` - change your archetecture from amd64 to other
 - `-p` OR `--path` - change install path from /mnt/hbs to yours
-- `-u` OR `--user` - Bypass check for root account and run from current 
---->
+- `-u` OR `--user` - Bypass check for root account and run from current
+<!--- - `-a` OR `--arch` - change your archetecture from amd64 to other --->
+
   
 ## :information_source: Credentials & Thanks
 Original script made by [s0me1newithhand7s](https://github.com/s0me1newithhand7s/hand7sbootstrap)  
