@@ -24,19 +24,19 @@ while [ "$1" != "" ]; do
     case $1 in
         -v ) echo "release $VER"; exit;;
 
-        -g | --graphic ) GUI=1;;
-        -a | --arc )  arc=$2; shift;;
+        -g | --gui  ) GUI=1;;
+        -a | --arc  ) arc=$2; shift;;
         -p | --path ) INSTPATH=$2;shift;;
         -u | --user ) noroot=1;;
 
-        --version ) echo "Linux Bootstraper by Russanandres, forked from hand7s";exit;;
+        --version ) echo "Linux Bootst$(tput bold)raper$(tput sgr0) by Russanandres, forked from hand7s";exit;;
     esac;shift
 done
 
 
 checks() {
     if ! [ $(id -u) = 0 ] && [ -z $noroot ]; then
-        echo -e "${BBlue}un me as a root.${NC}"
+        echo -e "${BBlue}Run me as a root.${NC}"
         exit 1
     fi
     INSTPATH=$(readlink -f $INSTPATH)
@@ -64,9 +64,9 @@ done;clear;}
 
 
 dirmake() { mkdir -p $INSTPATH; cd $INSTPATH
-    mount /dev/disk/by-label/root $INSTPATH
-    mkdir -p $INSTPATH/boot
-    mount /dev/disk/by/label/boot $INSTPATH/boot;}
+            mount /dev/disk/by-label/root $INSTPATH
+            mkdir -p $INSTPATH/boot
+            mount /dev/disk/by/label/boot $INSTPATH/boot;}
 Gdist_type(){ trap "clear;exit" SIGINT
 dialog --clear --item-help --title "Choose something" --colors "$@" \
         --menu "Hi, this is a \Zumenu\Zn of all systems what we have.\n\n\
@@ -104,9 +104,7 @@ Remove )
 It removes ALL files in directory $INSTPATH/*\n\
 So, all files in there will be gone!\n\n\
                   Continue? " 10 50
-    case $? in
-    0 )  { rm -rfv $INSTPATH/*;sleep 3; } 2>&1 | dialog --progressbox "So, we are deleted all of your chroots!" 30 100; Gdist_type;;
-    esac
+    if [ $? == 0 ]; then { rm -rfv $INSTPATH/*;sleep 3; } 2>&1 | dialog --progressbox "So, we are deleted all of your chroots!" 30 100; Gdist_type;fi
 ;;
 esac
 
@@ -189,7 +187,7 @@ hbs_type() { echo -e "" #clear
         Gentoo)     gbs_gentoo;;
         Slackware)  gbs_slackware;;
         Void)       gbs_void;;
-## HBS
+## TBS
         arch)       Tbs_pacman;;
         debian)     Tbs_deb;;
         gentoo)     Tbs_gentoo;;
@@ -212,7 +210,7 @@ untar() {
 
 
 ##### Above - Graphical Bootstrap Scripts (GBS)
-##### Under - Han7s Bootstrap Scrips (HBS) (I think i need to rename it to Teminal Bootstrap Scrips, or TBS)
+##### Under - Hand7s Bootstrap Scrips (HBS) (I think i need to rename it into Teminal Bootstrap Scrips, or TBS)
 
 
 
@@ -227,8 +225,8 @@ ${BRed}You started program with root rights, what have access across the system.
 We are NOT responsible for any damage caused to your system.
 All responsibility lies solely with you!${NC}
 
-${UBlue}It's okay if there is will be some error messages from the script, except of mount errors!
-But still, if you think, what something not okay, IMMEDIATELY create issue on github!!\n\n${NC}"
+\e[4mIt's okay if there is will be some error messages from the script, except of mount errors!
+But still, if you think, what something not okay, IMMEDIATELY create issue on github!!\n\n\e[0m"
 }
 
 
@@ -263,7 +261,7 @@ Tbs_deb() {
 }
 
 Tbs_gentoo() {
-    read -p "Which gentoo stage3 we will use? (openrc/systemd) [${BBlue}openrc${NC}]: " GEN_INIT
+    echo -en "Which gentoo stage3 we will use? (openrc/systemd) [openrc]: "; read -p GEN_INIT
     echo -e "${BYellow}Now acquire gentoo $GEN_INIT stage3 tarball.${NC}"
     if [ "$GEN_INIT" == "openrc" ]; then
         wget https://distfiles.gentoo.org/releases/$arc/autobuilds/20240428T163427Z/stage3-$arc-openrc-20240428T163427Z.tar.xz
@@ -280,7 +278,7 @@ Tbs_slackware() {
 }
 
 Tbs_void() {
-    read -p "Wich type of void we will use? (base/musl) [${BBlue}musl${NC}]: " VOID_TYPE
+    echo -en "Wich type of void we will use? (base/musl) [musl]: "; read -p VOID_TYPE
     echo -e "${BYellow}Now acquire void $VOID_TYPE tarball.${NC}"
     if [ "$VOID_TYPE" == "base" ]; then
         wget https://repo-default.voidlinux.org/live/current/void-x86_64-ROOTFS-20240314.tar.xz
@@ -312,6 +310,8 @@ if [ $GUI == 1 ]; then
 Gwarning
 Gdist_type
 Gdist_family
+elif [ $GUI == 2 ]; then
+echo Russanandres
 else
 Twarning
 Tdist_type
