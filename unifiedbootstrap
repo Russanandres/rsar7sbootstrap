@@ -180,26 +180,39 @@ Dbs_deb_str() { {
 }
 
 hbs_type() { echo -e "" #clear
+    DIST=`echo "$DIST" | tr '[:upper:]' '[:lower:]'`
     case $DIST in
-        Arch)       Dbs_pacman;;
-        Debian)     echo -e "\033[1;34mGood luck. Now you on your own. =)\033[0;37m";Dbs_deb_str;;
-        Ubuntu)     Dbs_ubuntu;;
-        Gentoo)     Dbs_gentoo;;
-        Slackware)  Dbs_slackware;;
-        Void)       Dbs_void;;
-## TBS
-        arch)       Tbs_pacman;;
-        debian)     Tbs_deb;;
-        gentoo)     Tbs_gentoo;;
-        slackware)  Tbs_slackware;;
-        void)       Tbs_void;;
-## KBS
-        1)          Kbs_pacman;;
-        2)          Kbs_debian;;
-        3)          Kbs_ubuntu;;
-        4)          Kbs_gentoo;;
-        5)          Kbs_slackware;;
-        6)          Kbs_void;;
+        arch)       case $GUI in
+                    1)Dbs_pacman;;
+                    2)Kbs_pacman;;
+                    *)Tbs_pacman;;
+                    esac;;
+        debian)
+                    case $GUI in
+                    1)Dbs_debian;;
+                    2)Kbs_debian;;
+                    *)echo -e "\033[1;34mGood luck. Now you on your own. =)\033[0;37m";Dbs_deb_str;;
+                    esac;;
+        ubuntu)     case $GUI in
+                    1)Dbs_ubuntu;;
+                    2)Kbs_ubuntu;;
+                    *)Tbs_deb;;
+                    esac;;
+        gentoo)     case $GUI in
+                    1)Dbs_gentoo;;
+                    2)Kbs_gentoo;;
+                    *)Tbs_gentoo;;
+                    esac;;
+        slackware)  case $GUI in
+                    1)Dbs_slackware;;
+                    2)Kbs_slackware;;
+                    *)Tbs_slackware;;
+                    esac;;
+        void)       case $GUI in
+                    1)Dbs_void;;
+                    2)Kbs_void;;
+                    *)Tbs_void;;
+                    esac;;
         *)clear;echo "[INFO] You pressed exit or there's exist bug!";exit;;
     esac
 }
@@ -244,7 +257,7 @@ Tdist_type() { echo -en "Family (${BGreen}arch${NC}/${BGreen}debian${NC}/${BGree
 Tdist_family() {
     case $DIST in
     arch)       echo -e "${BYellow}Choosen Arch.${NC}";;
-    debian)     echo -en "Which type? (${BGreen}debian${NC}/${BGreen}ubuntu${NC}) [${BBlue}debian${NC}]: ";read DEB;echo -e "${BGreen}Choosen $DEB.${NC}";;
+    debian)     echo -en "Which type? (${BGreen}debian${NC}/${BGreen}ubuntu${NC}) [${BBlue}debian${NC}]: ";read DIST;echo -e "${BGreen}Choosen $DIST.${NC}";;
     gentoo)     echo -e "${BYellow}Choosen gentoo.${NC}";;
     slackware)  echo -e "${BYellow}Choosen slackware.${NC}";;
     void)       echo -e "${BYellow}hoosen Void.${NC}";;
@@ -261,9 +274,9 @@ Tbs_pacman() {
 }
 
 Tbs_deb() {
-    if [ "$DEB" == "ubuntu" ]; then echo -e "${BYellow}Now acquire ubuntu minimal tarball.${NC}"
+    if [ "$DIST" == "ubuntu" ]; then echo -e "${BYellow}Now acquire ubuntu minimal tarball.${NC}"
      wget https://cloud-images.ubuntu.com/releases/24.04/release/ubuntu-24.04-server-cloudimg-arm64-root.tar.xz;untar
-    elif [ "$DEB" == "debian" ]; then echo -e "${BYellow}Good luck. Now you on your own. =)${NC}";Tbs_deb_str
+    elif [ "$DIST" == "debian" ]; then echo -e "${BYellow}Good luck. Now you on your own. =)${NC}";Tbs_deb_str
     else echo -e "${BBlue}No.${NC}"; exit 1
     fi
 }
@@ -324,7 +337,7 @@ All responsibility lies solely with you!";}
 
 Kdist_type(){ trap "clear;exit" SIGINT
 while true;do
-DIST=`kdialog --title "Choose something" --radiolist "Install path is: $INSTPATH" 1 "Arch" off  2 "Debian" on 3 "Ubuntu" off 4 "Gentoo" off 5 "Slackware" off 6 "Void" off 7 "" off 8 "Check" off 9 "Remove" off`
+DIST=`kdialog --title "Choose something" --radiolist "Install path is: $INSTPATH" arch "Arch" off  debian "Debian" on ubuntu "Ubuntu" off gentoo "Gentoo" off slackware "Slackware" off void "Void" off 7 "" off 8 "Check" off 9 "Remove" off`
 Kdist_family;done;}
 
 
@@ -332,23 +345,18 @@ Kdist_family;done;}
 Kdist_family() { trap "clear;exit" SIGINT
 case $DIST in
 7)echo "[INFO] Don't Be Emotional, choose something";;
-8) kdialog --title "So, there are all of your chroots!" --textbox /dev/stdin <<< $(ls $INSTPATH/);;
-# 8) { ls $INSTPATH/;sleep 5; } 2>&1 | dialog --progressbox "So, there are all of your chroots!" 30 100; Ddist_type;;
-9)
-        dialog  --title "Remove all?" --clear "$@" \
-        --yesno "Did you really want to delete ALL of chroots?\n\n\
-It removes ALL files in directory $INSTPATH/*\n\
-So, all files in there will be gone!\n\n\
-                  Continue? " 10 50
-    if [ $? == 0 ]; then { rm -rfv $INSTPATH/*;sleep 3; } 2>&1 | dialog --progressbox "So, we are deleted all of your chroots!" 30 100; Ddist_type;fi
+8) ls $INSTPATH/ >> /tmp/KBStmp; kdialog --title "So, there are all of your chroots!" --textbox /tmp/KBStmp; rm /tmp/KBStmp;;
+9) kdialog --title "Remove all?" --warningcontinuecancel "Did you really want to delete ALL of chroots?\n\n
+It removes ALL files in directory $INSTPATH/*
+So, all files in there will be gone!\n\n
+Continue?"
+if [ $? == 0 ]; then rm -rfv $INSTPATH/*;kdialog --title "PAY ATTENTION" --sorry "We deleted all of your chroots :("; Kdist_type;fi
 ;;
-*) hbs_type;;
-esac
-
-kdialog --msgbox "You have been choosen $DIST!";}
-
-
-
+*)  kdialog --msgbox "You have been choosen $DIST!\n\nPlease check terminal"
+    dialog 2>&1 /dev/null
+    if [ $? == 0 ];then GUI=1;else GUI=0;fi
+    hbs_type;;
+esac;}
 
 
 
