@@ -25,6 +25,7 @@ while [ "$1" != "" ]; do
         -v ) echo "release $VER"; exit;;
 
         -g | --gui  ) GUI=1;;
+        -k | --kde  ) GUI=2;;
         -a | --arc  ) arc=$2; shift;;
         -p | --path ) INSTPATH=$2;shift;;
         -u | --user ) noroot=1;;
@@ -43,8 +44,15 @@ checks() {
     tempfile=`(tempfile) 2>/dev/null` || tempfile=/tmp/test$$
     trap "rm -f $tempfile" 0 $SIG_NONE $SIG_HUP $SIG_INT $SIG_QUIT $SIG_TERM;}
 
+dirmake() { mkdir -p $INSTPATH; cd $INSTPATH
+            mount /dev/disk/by-label/root $INSTPATH
+            mkdir -p $INSTPATH/boot
+            mount /dev/disk/by/label/boot $INSTPATH/boot;}
 
-Gwarning(){ trap "clear;exit" SIGINT
+
+
+
+Dwarning(){ trap "clear;exit" SIGINT
 left=3
 unit="seconds"
 while test $left != 0;do
@@ -59,15 +67,7 @@ You have $left $unit to read this..." 12 70
 left=`expr $left - 1`
 test "$left" = 1 && unit="second"
 done;clear;}
-
-
-
-
-dirmake() { mkdir -p $INSTPATH; cd $INSTPATH
-            mount /dev/disk/by-label/root $INSTPATH
-            mkdir -p $INSTPATH/boot
-            mount /dev/disk/by/label/boot $INSTPATH/boot;}
-Gdist_type(){ trap "clear;exit" SIGINT
+Ddist_type(){ trap "clear;exit" SIGINT
 dialog --clear --item-help --title "Choose something" --colors "$@" \
         --menu "Hi, this is a \Zumenu\Zn of all systems what we have.\n\n\
 Please choose something one of that or cancel \n\
@@ -86,7 +86,7 @@ Choose it now!\n\n\
 retval=$?;DIST=$(cat $tempfile)
 if [ $retval == 1 ]; then clear;exit; fi;}
 
-Gdist_family() { trap "clear;exit" SIGINT
+Ddist_family() { trap "clear;exit" SIGINT
 case $DIST in
 Debian)
         dialog --clear --title "Select debian" "$@" \
@@ -96,15 +96,15 @@ Ubuntu or real Debian?\n\
         "Debian"  "real Debian" \
         "Ubuntu"  "Modified debian for newbiers"  2> $tempfile
         DIST=$(cat $tempfile);;
-Check ) { ls $INSTPATH/;sleep 5; } 2>&1 | dialog --progressbox "So, there are all of your chroots!" 30 100; Gdist_type;;
-.)Gdist_type;;
+Check ) { ls $INSTPATH/;sleep 5; } 2>&1 | dialog --progressbox "So, there are all of your chroots!" 30 100; Ddist_type;;
+.)Ddist_type;;
 Remove )
         dialog  --title "Remove all?" --clear "$@" \
         --yesno "Did you really want to delete ALL of chroots?\n\n\
 It removes ALL files in directory $INSTPATH/*\n\
 So, all files in there will be gone!\n\n\
                   Continue? " 10 50
-    if [ $? == 0 ]; then { rm -rfv $INSTPATH/*;sleep 3; } 2>&1 | dialog --progressbox "So, we are deleted all of your chroots!" 30 100; Gdist_type;fi
+    if [ $? == 0 ]; then { rm -rfv $INSTPATH/*;sleep 3; } 2>&1 | dialog --progressbox "So, we are deleted all of your chroots!" 30 100; Ddist_type;fi
 ;;
 esac
 
@@ -123,15 +123,15 @@ done;clear;}
 
 
 
-gbs_pacman() { trap "killall wget; rm archlinux-bootstrap-x86_64.tar.zst*;clear;exit" SIGINT
+Dbs_pacman() { trap "killall wget; rm archlinux-bootstrap-x86_64.tar.zst*;clear;exit" SIGINT
 { wget https://mirror.rackspace.com/archlinux/iso/latest/archlinux-bootstrap-x86_64.tar.zst && untar; } 2>&1 | dialog --progressbox "Now acquire arch tarball." 30 100; }
 
 
-gbs_ubuntu(){ trap "killall wget; ubuntu-24.04-server-cloudimg-arm64-root.tar.xz*;clear;exit" SIGINT
+Dbs_ubuntu(){ trap "killall wget; ubuntu-24.04-server-cloudimg-arm64-root.tar.xz*;clear;exit" SIGINT
 { wget https://cloud-images.ubuntu.com/releases/24.04/release/ubuntu-24.04-server-cloudimg-arm64-root.tar.xz && untar; } 2>&1 | dialog --progressbox "Now acquire ubuntu minimal tarball." 30 100; }
 
 
-gbs_gentoo() {
+Dbs_gentoo() {
 dialog --clear --title "Void menu" "$@" --menu "You can install 2 types of gentoo3!\n\n\
 Gentoo stage3 has 2 init managers:\n\n\
           Choose the init you like:" 20 51 4 \
@@ -150,11 +150,11 @@ GEN_INIT=$(cat $tempfile)
 }
 
 
-gbs_slackware() { trap "killall wget; rm slackware64-current-mini-20160515.tar.xz*;clear;exit" SIGINT
+Dbs_slackware() { trap "killall wget; rm slackware64-current-mini-20160515.tar.xz*;clear;exit" SIGINT
 { wget https://ponce.cc/slackware/lxc/slackware64-current-mini-20160515.tar.xz && untar; } 2>&1 | dialog --progressbox "Now acquire slackware tarball." 30 100; }
 
 
-gbs_void() {
+Dbs_void() {
 dialog --clear --title "Void menu" "$@" --menu "You can install 2 types of void!\n\n\
 Base void or void on musl?\n\n\
           Choose the OS you like:" 20 51 4 \
@@ -171,7 +171,7 @@ VOID_TYPE=$(cat $tempfile)
     fi
 }
 
-gbs_deb_str() { {
+Dbs_deb_str() { {
     mkdir -p /usr/share/debootstrap/scripts/
     curl https://raw.githubusercontent.com/aburch/debootstrap/master/scripts/sid > /usr/share/debootstrap/scripts/sid
     curl https://raw.githubusercontent.com/aburch/debootstrap/master/functions > /usr/share/debootstrap/functions
@@ -181,18 +181,26 @@ gbs_deb_str() { {
 
 hbs_type() { echo -e "" #clear
     case $DIST in
-        Arch)       gbs_pacman;;
-        Debian)     echo -e "\033[1;34mGood luck. Now you on your own. =)\033[0;37m";gbs_deb_str;;
-        Ubuntu)     gbs_ubuntu;;
-        Gentoo)     gbs_gentoo;;
-        Slackware)  gbs_slackware;;
-        Void)       gbs_void;;
+        Arch)       Dbs_pacman;;
+        Debian)     echo -e "\033[1;34mGood luck. Now you on your own. =)\033[0;37m";Dbs_deb_str;;
+        Ubuntu)     Dbs_ubuntu;;
+        Gentoo)     Dbs_gentoo;;
+        Slackware)  Dbs_slackware;;
+        Void)       Dbs_void;;
 ## TBS
         arch)       Tbs_pacman;;
         debian)     Tbs_deb;;
         gentoo)     Tbs_gentoo;;
         slackware)  Tbs_slackware;;
         void)       Tbs_void;;
+## KBS
+        1)          Kbs_pacman;;
+        2)          Kbs_debian;;
+        3)          Kbs_ubuntu;;
+        4)          Kbs_gentoo;;
+        5)          Kbs_slackware;;
+        6)          Kbs_void;;
+        *)clear;echo "[INFO] You pressed exit or there's exist bug!";exit;;
     esac
 }
 
@@ -210,7 +218,7 @@ untar() {
 
 
 ##### Above - Graphical Bootstrap Scripts (GBS)
-##### Under - Hand7s Bootstrap Scrips (HBS) (I think i need to rename it into Teminal Bootstrap Scrips, or TBS)
+##### Under - Terminal Bootstrap Scrips (HBS)
 
 
 
@@ -300,6 +308,46 @@ Tbs_deb_str() {
 
 
 
+##### Above - Graphical Bootstrap Scripts (GBS)
+##### Upper - Terminal Bootstrap Scripts (TBS)
+##### Under - KBootstrap Scrips (KBS)
+
+
+Kwarning(){ trap "clear;exit" SIGINT
+kdialog --title "PAY ATTENTION" --sorry "
+Hello, this is warning message
+
+You started program with root rights, what have access across the system.
+We are NOT responsible for any damage caused to your system.
+All responsibility lies solely with you!";}
+
+
+Kdist_type(){ trap "clear;exit" SIGINT
+while true;do
+DIST=`kdialog --title "Choose something" --radiolist "Install path is: $INSTPATH" 1 "Arch" off  2 "Debian" on 3 "Ubuntu" off 4 "Gentoo" off 5 "Slackware" off 6 "Void" off 7 "" off 8 "Check" off 9 "Remove" off`
+Kdist_family;done;}
+
+
+
+Kdist_family() { trap "clear;exit" SIGINT
+case $DIST in
+7)echo "[INFO] Don't Be Emotional, choose something";;
+8) kdialog --title "So, there are all of your chroots!" --textbox /dev/stdin <<< $(ls $INSTPATH/);;
+# 8) { ls $INSTPATH/;sleep 5; } 2>&1 | dialog --progressbox "So, there are all of your chroots!" 30 100; Ddist_type;;
+9)
+        dialog  --title "Remove all?" --clear "$@" \
+        --yesno "Did you really want to delete ALL of chroots?\n\n\
+It removes ALL files in directory $INSTPATH/*\n\
+So, all files in there will be gone!\n\n\
+                  Continue? " 10 50
+    if [ $? == 0 ]; then { rm -rfv $INSTPATH/*;sleep 3; } 2>&1 | dialog --progressbox "So, we are deleted all of your chroots!" 30 100; Ddist_type;fi
+;;
+*) hbs_type;;
+esac
+
+kdialog --msgbox "You have been choosen $DIST!";}
+
+
 
 
 
@@ -307,11 +355,13 @@ Tbs_deb_str() {
 checks
 dirmake
 if [ $GUI == 1 ]; then
-Gwarning
-Gdist_type
-Gdist_family
+Dwarning
+Ddist_type
+Ddist_family
 elif [ $GUI == 2 ]; then
-echo Russanandres
+Kwarning
+Kdist_type
+Kdist_family
 else
 Twarning
 Tdist_type
